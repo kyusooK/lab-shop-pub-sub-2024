@@ -1,54 +1,56 @@
 package pubsub.domain;
 
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
-import javax.persistence.*;
-import lombok.Data;
 import pubsub.InventoryApplication;
+import javax.persistence.*;
+import java.util.List;
+import lombok.Data;
+import java.util.Date;
 
 @Entity
-@Table(name = "Inventory_table")
+@Table(name="Inventory_table")
 @Data
-//<<< DDD / Aggregate Root
-public class Inventory {
 
+public class Inventory  {
+
+    
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    //@GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
-
+    
     private Long stock;
 
-    public static InventoryRepository repository() {
-        InventoryRepository inventoryRepository = InventoryApplication.applicationContext.getBean(
-            InventoryRepository.class
-        );
+    @PostPersist
+    public void onPostPersist(){
+    }
+
+    // @PostLoad
+    // public void makeDelay(){
+    //     try {
+    //         Thread.currentThread().sleep((long) (400 + Math.random() * 220));
+    //     } catch (InterruptedException e) {
+    //         e.printStackTrace();
+    //     }
+
+    // }
+
+    public static InventoryRepository repository(){
+        InventoryRepository inventoryRepository = InventoryApplication.applicationContext.getBean(InventoryRepository.class);
         return inventoryRepository;
     }
 
-    //<<< Clean Arch / Port Method
     public static void decreaseStock(OrderPlaced orderPlaced) {
-        //implement business logic here:
 
-        /** Example 1:  new item 
-        Inventory inventory = new Inventory();
-        repository().save(inventory);
-
-        */
-
-        /** Example 2:  finding and process
+        /** fill out following code  */
         
-        repository().findById(orderPlaced.get???()).ifPresent(inventory->{
-            
-            inventory // do something
-            repository().save(inventory);
-
+         repository().findById(Long.valueOf(orderPlaced.getProductId())).ifPresent(inventory->{
+             inventory.setStock(inventory.getStock() - orderPlaced.getQty());
+             repository().save(inventory);
 
          });
-        */
 
+        
     }
-    //>>> Clean Arch / Port Method
+
+
 
 }
-//>>> DDD / Aggregate Root
